@@ -54,14 +54,22 @@ class Message {
 
 		$convertedAddresses = [];
 
-		foreach ($addresses as $email => $readableName) {
-			if (!\is_numeric($email)) {
-				list($name, $domain) = \explode('@', $email, 2);
-				$domain = \idn_to_ascii($domain, 0, INTL_IDNA_VARIANT_UTS46);
+		foreach($addresses as $email => $readableName) {
+			if(!is_numeric($email)) {
+				list($name, $domain) = explode('@', $email, 2);
+				if (defined('INTL_IDNA_VARIANT_UTS46')) {
+					$domain = idn_to_ascii($domain, 0, INTL_IDNA_VARIANT_UTS46);
+				} else {
+					$domain = idn_to_ascii($domain);
+				}
 				$convertedAddresses[$name.'@'.$domain] = $readableName;
 			} else {
-				list($name, $domain) = \explode('@', $readableName, 2);
-				$domain = \idn_to_ascii($domain, 0, INTL_IDNA_VARIANT_UTS46);
+				list($name, $domain) = explode('@', $readableName, 2);
+				if (defined('INTL_IDNA_VARIANT_UTS46')) {
+					$domain = idn_to_ascii($domain, 0, INTL_IDNA_VARIANT_UTS46);
+				} else {
+					$domain = idn_to_ascii($domain);
+				}
 				$convertedAddresses[$email] = $name.'@'.$domain;
 			}
 		}
